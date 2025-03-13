@@ -1,0 +1,39 @@
+1> I have import "PyPDFLoader" from "langchain_community.document_loaders" and "RecursiveCharacterTextSplitter" from "langchain.text_splitter" for handling PDF documents.
+   -Use "PyPDFLoader" to load PDF files. If you have multiple PDFs in a directory, you can use "DirectoryLoader" with "PyPDFLoader" as the loader class.
+   -Use RecursiveCharacterTextSplitter to split the document into smaller chunks.
+
+2> load raw data
+   ==============
+   -need "pypdf" library , so install that for working with PDF files in Python.
+   -create a function load_pdf_files(data): function will load all PDF files from the specified directory into memory
+
+3> chunks created
+   =============
+   -create a function that divide the huge documents in chunks using
+    RecursiveCharacterTextSplitter class: This class tries to split text like sentences or paragraphs recursively with 2 parameters:
+     (i)chunk size
+     (ii)chunk overlap: tells how many characters should overlap between chunks to preserve some context between two consecutive chunks 
+   -When you call RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50), you're setting up the rules for how text should be split but not actually performing the split.
+   -split_documents() is a method of the RecursiveCharacterTextSplitter class. It is what actually performs the splitting on your documents. 
+
+4> Vector embedding
+   ================
+   - Use "HuggingFaceEmbeddings" This is a specific class available in the "langchain_huggingface" module. It's used to convert text into embeddings using Hugging Face models.
+   -model which was used for embedding "sentence-transformers/all-MiniLM-L6-v2" .
+
+   ====================================================================Part 2=====================================================================
+
+5> create token in huging face token and then copy that token and then paste it in .env file
+   install langchain_huggingface library and use "HuggingFaceEndpoint" for setting up LLM.
+
+6>setup LLM
+ ===========
+ -import os library for using token key
+ -use "os.environ.get("HF_TOKEN")" for using token key in enviroment.
+ -and store its name in local variable("his repo id") "mistralai/Mistral-7B-Instruct-v0.3"
+ -load LLM using "HuggingFaceEndpoint" and return as object.
+
+ 7>Connect LLM with FAISS db
+ ==============================
+ -using "FAISS.load_local()" for loading model in FAISS database named as  "db"
+ -do QA chaining like retrievalqa chaining
