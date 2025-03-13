@@ -1,9 +1,11 @@
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = ""  # Disable CUDA before imports
+
 import streamlit as st
 from langchain_huggingface import HuggingFaceEmbeddings, HuggingFaceEndpoint
 from langchain_community.vectorstores import FAISS
 from langchain_core.prompts import PromptTemplate
 from langchain.chains import RetrievalQA
-import os
 
 DB_FAISS_PATH = "vector_db/"
 
@@ -38,7 +40,6 @@ def load_llm(huggingface_repo_id, hf_token):
 def main():
     st.title("Hi!! I am Medibot.\nAsk me anything about the medical field")
 
-    # Fetch token from Streamlit secrets
     try:
         HF_TOKEN = st.secrets["HF_TOKEN"]
     except KeyError:
@@ -61,7 +62,7 @@ def main():
         try:
             vectorstore = get_vectorstore()
             if vectorstore is None:
-                return  # Error already displayed in get_vectorstore()
+                return
 
             qa_chain = RetrievalQA.from_chain_type(
                 llm=load_llm(HUGGINGFACE_REPO_ID, HF_TOKEN),
