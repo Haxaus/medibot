@@ -1,3 +1,4 @@
+import streamlit as st
 import os
 from dotenv import load_dotenv  # Add for local env support
 from langchain_huggingface import HuggingFaceEndpoint
@@ -12,7 +13,7 @@ from langgraph.graph import START, MessagesState, StateGraph
 load_dotenv()
 
 # Step 1: Setup LLM (Mistral with HuggingFace)
-HF_TOKEN = os.getenv("HF_TOKEN")
+HF_TOKEN = st.secrets.get("HF_TOKEN", os.getenv("HF_TOKEN"))
 if not HF_TOKEN:
     raise ValueError("HF_TOKEN not found in environment variables. Set it in .env or your environment.")
 HUGGINGFACE_REPO_ID = "mistralai/Mistral-7B-Instruct-v0.3"
