@@ -4,18 +4,18 @@ from langchain_community.vectorstores import FAISS
 from langchain_core.prompts import PromptTemplate
 from langchain.chains import RetrievalQA
 import os
-from dotenv import load_dotenv  # For local development
-
-# Load environment variables locally (optional)
-load_dotenv()
 
 DB_FAISS_PATH = "vector_db/"
 
 @st.cache_resource
 def get_vectorstore():
     embedding_model = HuggingFaceEmbeddings(model_name='sentence-transformers/all-MiniLM-L6-v2')
-    db = FAISS.load_local(DB_FAISS_PATH, embedding_model, allow_dangerous_deserialization=True)
-    return db
+    try:
+        db = FAISS.load_local(DB_FAISS_PATH, embedding_model, allow_dangerous_deserialization=True)
+        return db
+    except Exception as e:
+        st.error(f"Failed to load vector store from {DB_FAISS_PATH}: {str(e)}")
+        return None
 
 def set_custom_prompt():
     template = """
@@ -38,6 +38,15 @@ def load_llm(huggingface_repo_id, hf_token):
 def main():
     st.title("Hi!! I am Medibot.\nAsk me anything about the medical field")
 
+    # Fetch token from Streamlit secrets
+    try:
+        HF_TOKEN = st.secrets["HF_TOKEN"]
+    except KeyError:
+        st.error("Hugging Face token not found. Please set HF_TOKEN in Streamlit secrets.")
+        return
+
+    HUGGINGFACE_REPO_ID = "mistralai/Mistral-7B-Instruct-v0.3"
+
     if 'messages' not in st.session_state:
         st.session_state.messages = []
 
@@ -49,18 +58,10 @@ def main():
         st.chat_message('user').markdown(prompt)
         st.session_state.messages.append({'role': 'user', 'content': prompt})
 
-        HUGGINGFACE_REPO_ID = "mistralai/Mistral-7B-Instruct-v0.3"
-        # Fetch token securely: Streamlit Cloud secrets or local env
-        HF_TOKEN = st.secrets.get("HF_TOKEN", os.getenv("HF_TOKEN"))
-        if not HF_TOKEN:
-            st.error("Hugging Face token not found. Please set HF_TOKEN in secrets or environment.")
-            return
-
         try:
             vectorstore = get_vectorstore()
             if vectorstore is None:
-                st.error("Failed to load the vector store")
-                return
+                return  # Error already displayed in get_vectorstore()
 
             qa_chain = RetrievalQA.from_chain_type(
                 llm=load_llm(HUGGINGFACE_REPO_ID, HF_TOKEN),
@@ -74,7 +75,7 @@ def main():
             st.chat_message('assistant').markdown(result)
             st.session_state.messages.append({'role': 'assistant', 'content': result})
         except Exception as e:
-            st.error(f"Error: {str(e)}")
+            st.error(f"Error during query processing: {str(e)}")
 
 if __name__ == "__main__":
     main()
