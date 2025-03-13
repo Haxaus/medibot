@@ -2186,7 +2186,7 @@
         },
 "torch": {
     "hashes": [
-        "sha256:4a57ed16f5e4b9a5d2c6a96f849a90b6c0f622a46b9b919e90f82e1730d1b943e"
+        "sha256:59e78aa0c690f70734e42670036d6b541930b8eabbaa18d94e090abf14cc4d91"
     ],
     "index": "pytorch-cpu",
     "version": "==2.6.0"
