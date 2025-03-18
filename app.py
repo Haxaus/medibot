@@ -22,9 +22,10 @@ def get_vectorstore():
 def set_custom_prompt():
     template = """
     Use the pieces of information provided in the context to answer user's question.
-    If you don’t know the answer, just say that you don’t know, don’t try to make up an answer. 
-    Don’t provide anything out of the given context.
-
+    -If you don’t know the answer, just say that you don’t know, don’t try to make up an answer. 
+    -Don’t provide anything out of the given context and Do not include additional questions or answers that were not asked.
+    -Do not include additional questions or answers that were not asked.
+    **Disclaimer:** This chatbot provides general health-related information and should not be used as a substitute for professional medical advice. 
     Context: {context}
     Question: {question}
     """
