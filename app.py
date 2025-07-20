@@ -35,9 +35,12 @@ def load_llm(huggingface_repo_id, hf_token):
     return HuggingFaceEndpoint(
         repo_id=huggingface_repo_id,
         temperature=0.5,
-        max_length=512,
-        huggingfacehub_api_token=hf_token  # ✅ CORRECT usage
+        huggingfacehub_api_token=hf_token,  # ✅ Correct place for token
+        model_kwargs={
+            "max_length": 512               # ✅ Correct place for max_length
+        }
     )
+
 
 
 def main():
