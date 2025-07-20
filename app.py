@@ -35,8 +35,10 @@ def load_llm(huggingface_repo_id, hf_token):
     return HuggingFaceEndpoint(
         repo_id=huggingface_repo_id,
         temperature=0.5,
-        model_kwargs={"token": hf_token, "max_length": "512"}
+        max_length=512,
+        huggingfacehub_api_token=hf_token  # ✅ CORRECT usage
     )
+
 
 def main():
     st.title("Hi!! I am Medibot.\nAsk me anything about the medical field")
